@@ -1,1 +1,1 @@
-# mantel-ai-which-cat
+# blossom-trivia
