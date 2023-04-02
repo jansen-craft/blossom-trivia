@@ -28,20 +28,47 @@ params = {
 	"limit": 1,
 	"region": "US"
 }
-
-url = "https://the-trivia-api.com/api/questions?"
-if len(params["categories"]) != 0:
-	url += "categories=" + "{},".format(i for i in params["categories"]) + "&"
-if params["difficulty"]:
-	url += "difficulty={}&".format(params["difficulty"])
-if params["limit"] <= 20 and params["limit"] > 0:
-	url += "limit={}&".format(params["limit"])
-if params["region"]:
-	url += "region={}&".format(params["region"])
-	
-res = requests.get(url)
-
-
+def updateparams():
+	params["categories"] = []
+	for category in category_options:
+		if category_options[category]:
+			params["categories"].append(category)
+	for difficulty in difficulty_options:
+		if difficulty_options[difficulty]:
+			params["difficulty"]= difficulty
+def getquestions(params):
+	updateparams()
+	url = "https://the-trivia-api.com/api/questions?"
+	if len(params["categories"]) != 0:
+		url += "categories=" 
+		for i in params["categories"]:
+			url += "{},".format(i) 
+		url += "&"
+	if params["difficulty"]:
+		url += "difficulty={}&".format(params["difficulty"])
+	if params["limit"] <= 20 and params["limit"] > 0:
+		url += "limit={}&".format(params["limit"])
+	if params["region"]:
+		url += "region={}&".format(params["region"])
+	print(url)
+	res = requests.get(url)
+	return res.json()
+def getquestions(params):
+	updateparams()
+	url = "https://the-trivia-api.com/api/questions?"
+	if "categories" in params and len(params["categories"]) != 0:
+		url += "categories=" 
+		for i in params["categories"]:
+			url += "{},".format(i) 
+		url += "&"
+	if "difficulty" in params and params["difficulty"] != "any":
+		url += "difficulty={}&".format(params["difficulty"])
+	if "limit" in params and params["limit"] <= 20 and params["limit"] > 0:
+		url += "limit={}&".format(params["limit"])
+	if "region" in params:
+		url += "region={}&".format(params["region"])
+	res = requests.get(url)
+	return res.json()
 # https://the-trivia-api.com/api/questions
 
 def difficulty_menu():
@@ -81,8 +108,18 @@ def menu():
         difficulty_menu()
         return
     elif(user_input.lower() == 'q'):
-        return
+        exit(0)
 
+def questionloop():
+	# repeatedly ask questions.
+	while True:
+		menu()
+		questions = getquestions(params)
+		for question in questions:
+			ask(question)
+
+def ask(question):
+	print(question)
 print(ascii_art)
-menu()
+questionloop()
          
