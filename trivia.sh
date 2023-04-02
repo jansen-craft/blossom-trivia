@@ -1,1 +1,0 @@
-echo "Trivia Time!"
